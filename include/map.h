@@ -9,7 +9,7 @@
 #include <cmath>
 
 #include "game.h"
-#include "PerlinNoise.h"
+#include "mapgen.h"
 
 class map
 {

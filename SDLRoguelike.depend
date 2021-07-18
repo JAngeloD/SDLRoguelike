@@ -1,17 +1,17 @@
 # depslib dependency file v1.0
-1626052915 source:c:\sdlroguelike\sdlroguelike\src\game.cpp
+1626645964 source:c:\sdlroguelike\sdlroguelike\src\game.cpp
 	"game.h"
 
 1626644889 source:c:\sdlroguelike\sdlroguelike\src\game_entity.cpp
 	"game_entity.h"
 
-1626645626 source:c:\sdlroguelike\sdlroguelike\src\main.cpp
+1626646147 source:c:\sdlroguelike\sdlroguelike\src\main.cpp
 	"game.h"
 
-1626641845 source:c:\sdlroguelike\sdlroguelike\src\map.cpp
+1626647025 source:c:\sdlroguelike\sdlroguelike\src\map.cpp
 	"map.h"
 
-1625241878 source:c:\sdlroguelike\sdlroguelike\src\mapgen.cpp
+1626647003 source:c:\sdlroguelike\sdlroguelike\src\mapgen.cpp
 	"mapgen.h"
 
 1626641990 source:c:\sdlroguelike\sdlroguelike\src\perlinnoise.cpp
@@ -23,7 +23,7 @@
 1625883749 source:c:\sdlroguelike\sdlroguelike\src\texture.cpp
 	"texture.h"
 
-1625944876 c:\sdlroguelike\sdlroguelike\include\game.h
+1626645947 c:\sdlroguelike\sdlroguelike\include\game.h
 	<SDL.h>
 	<SDL_image.h>
 	<stdio.h>
@@ -425,7 +425,7 @@
 	<vector>
 	"game.h"
 
-1626325142 c:\sdlroguelike\sdlroguelike\include\map.h
+1626647045 c:\sdlroguelike\sdlroguelike\include\map.h
 	<SDL.h>
 	<SDL_image.h>
 	<stdio.h>
@@ -433,7 +433,7 @@
 	<string>
 	<cmath>
 	"game.h"
-	"PerlinNoise.h"
+	"mapgen.h"
 
 1626642510 c:\sdlroguelike\sdlroguelike\include\perlinnoise.h
 	<vector>
@@ -451,8 +451,14 @@
 	"texture.h"
 	"game.h"
 
-1625237014 c:\sdlroguelike\sdlroguelike\include\mapgen.h
-	<stdio.h>
-	<fstream>
+1626646962 c:\sdlroguelike\sdlroguelike\include\mapgen.h
+	<vector>
+	<array>
+	<cmath>
+	<random>
 	<algorithm>
+	<numeric>
+	<utility>
+	<SDL.h>
+	<time.h>
 

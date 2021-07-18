@@ -1,11 +1,7 @@
 #include "map.h"
 
-PerlinNoise *noiseMap;
-
 map::map()
 {
-
-    noiseMap = new PerlinNoise(20);
 
 }
 
