@@ -1,0 +1,25 @@
+# depslib dependency file v1.0
+1626052915 source:c:\sdlroguelike\sdlroguelike\src\game.cpp
+	"game.h"
+
+1625092156 source:c:\sdlroguelike\sdlroguelike\src\game_entity.cpp
+	"game_entity.h"
+
+1626052946 source:c:\sdlroguelike\sdlroguelike\src\main.cpp
+	"game.h"
+
+1626641845 source:c:\sdlroguelike\sdlroguelike\src\map.cpp
+	"map.h"
+
+1625241878 source:c:\sdlroguelike\sdlroguelike\src\mapgen.cpp
+	"mapgen.h"
+
+1626641990 source:c:\sdlroguelike\sdlroguelike\src\perlinnoise.cpp
+	"PerlinNoise.h"
+
+1625952741 source:c:\sdlroguelike\sdlroguelike\src\player.cpp
+	"player.h"
+
+1625883749 source:c:\sdlroguelike\sdlroguelike\src\texture.cpp
+	"texture.h"
+
