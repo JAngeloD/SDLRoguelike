@@ -23,10 +23,7 @@ class map
 
     private:
         std::vector<std::vector<int>> terrain;
-
-
-
-
+        PerlinNoise noiseMap;
 
         //SDL_Rect tileArea;
 

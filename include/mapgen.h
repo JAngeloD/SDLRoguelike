@@ -38,12 +38,12 @@ class BSPDungeon {
     BSPDungeon(int width, int height, int iterations);
 
     public:
+    void buildDungeon(int iterations);
     void draw();
     std::vector<Cell> getLeaves() {return leaves;}
     std::vector<Room> getRooms() {return roomList;}
 
     private:
-    void split();
     void buildRooms();
     void buildCorridors();
     int findSmallestRoomDimension(); //Finds the smallest width/height of a room to be used to make corridor size scale
@@ -75,23 +75,5 @@ private:
 	double grad(int hash, double x, double y, double z);
 };
 
-class mapgen
-{
-    public:
-        mapgen(int width, int height);
-        ~mapgen();
-
-        void mapInit();
-        void perlinCreate(int mapWidth, int mapHeight, int octave, float frequency);
-
-        float *outputPerlin = nullptr;
-        float *noiseSeed = nullptr;
-
-    private:
-        int mapWidth;
-        int mapHeight;
-
-
-};
 
 #endif // MAPGEN_H

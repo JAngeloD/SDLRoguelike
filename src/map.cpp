@@ -18,12 +18,13 @@ void map::loadMap() {
 
 void map::drawMap() {
 
+
     /*
     for ( int x = 0; x < 800; x++)
         for ( int y = 0; y < 600; y++) {
 
             //Increase number on divisor to increase
-            double noise = (noiseMap->noise(10 * (x/(double)600), 10 * (y/(double)600), 0.8)) * 255;
+            double noise = (noiseMap.noise(10 * (x/(double)600), 10 * (y/(double)600), 0.8)) * 255;
 
             if (noise >= 200) {
                 SDL_SetRenderDrawColor(game::renderer, 255, 255, 255, 255); //white
@@ -45,8 +46,8 @@ void map::drawMap() {
         };
     */
 
-
     BSPDungeon* city = new BSPDungeon(400, 400, 4);
+    city->buildDungeon(5);
     std::vector<Cell> cells = city->getLeaves();
     std::vector<Room> corridors = city->getRooms();
 
@@ -98,47 +99,3 @@ void map::drawMap() {
 
 
 }
-
-/* IDK what this is lmao
- *
-    void map::drawMap(float *perlinNoise) {
-
-        float max = perlinNoise[0];
-        for ( int i = 0; i < 360000; i++) {
-            if (perlinNoise[i] > max) {
-                max = perlinNoise[i];
-            }
-        }
-
-        float scale = 255/max;
-
-        for ( int x = 0; x < 600; x++) {
-            for ( int y = 0; y < 600; y++)  {
-
-                int colour;
-
-                colour = (int)(perlinNoise[y * 600 + x] * scale);
-
-                if (colour >= 200) {
-                    SDL_SetRenderDrawColor(game::renderer, 255, 255, 255, 255); //white
-                }
-                else if (colour >= 180 && colour < 210) {
-                     SDL_SetRenderDrawColor(game::renderer, 107, 104, 98, 255); //gray
-                }
-                else if (colour >= 120 && colour < 180) {
-                    SDL_SetRenderDrawColor(game::renderer, 18, 148, 74, 255); //green
-                }
-                else if (colour >= 90 && colour < 120 ) {
-                    SDL_SetRenderDrawColor(game::renderer, 242, 209, 153, 255); //yellow
-                }
-                else if (colour < 90 ) {
-                    SDL_SetRenderDrawColor(game::renderer, 0, 213, 255, 255); //blue
-                }
-
-                SDL_RenderDrawPoint(game::renderer, x, y);
-
-            }
-        }
-
-    }
-*/
