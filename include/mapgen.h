@@ -13,12 +13,9 @@
 #define MAPGEN_H
 
 struct Room {
-
-    //Upper Left Coordinate
-    std::pair<int, int> origin;
+    std::pair<int, int> origin; //Upper Left Coordinate
     int height;
     int width;
-
 };
 
 //Contains split dimensions / dungeon dimensions
@@ -26,10 +23,6 @@ struct Cell {
     std::pair<int, int> vertex[4]; //Node dimensions
     bool split; //X Split = True
                 //Y Split = False
-
-    struct Cell* parent = nullptr;
-    struct Cell* sister = nullptr;
-    struct Cell* children[2] = {};
     Room room;
 };
 
@@ -45,18 +38,17 @@ class BSPDungeon {
 
     private:
     void buildRooms();
+    void connectRoom(Room room1ID, Room room2ID, bool splitAxis);
     void buildCorridors();
-    int findSmallestRoomDimension(); //Finds the smallest width/height of a room to be used to make corridor size scale
-    void destroyTree();
+    int findSmallestRoomDimension(); //Finds the smallest width/height of a room to be used to make corridor size scale when increasing iteration #
 
     private:
+    Cell root; //Contains dimensions of the whole dungeon
     int dungeonWidth;
     int dungeonHeight;
-    Cell root;
+    int dungeonIterations;
+    std::vector<Cell> leaves; //Note: important to seperate rooms and leaves dont remove
     std::vector<Room> roomList;
-    std::vector<Cell> leaves;
-
-
 };
 
 class PerlinNoise {
@@ -75,5 +67,8 @@ private:
 	double grad(int hash, double x, double y, double z);
 };
 
+<<<<<<< Updated upstream
 
+=======
+>>>>>>> Stashed changes
 #endif // MAPGEN_H

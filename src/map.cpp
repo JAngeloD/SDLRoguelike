@@ -46,18 +46,28 @@ void map::drawMap() {
         };
     */
 
+<<<<<<< Updated upstream
     BSPDungeon* city = new BSPDungeon(400, 400, 4);
     city->buildDungeon(5);
+=======
+
+    BSPDungeon* city = new BSPDungeon(400, 400, 5);
+>>>>>>> Stashed changes
     std::vector<Cell> cells = city->getLeaves();
     std::vector<Room> corridors = city->getRooms();
 
+    /*
     //Draw Cell containers
     for (int i = 0 ; i < (int)cells.size(); i++) {
+        printf("Cell %i\n", i+1);
+        printf("A: x= %i, y= %i\n", cells[i].vertex[0].first, cells[i].vertex[0].second);
+        printf("B: x= %i, y= %i\n", cells[i].vertex[1].first, cells[i].vertex[1].second);
+        printf("C: x= %i, y= %i\n", cells[i].vertex[2].first, cells[i].vertex[2].second);
+        printf("D: x= %i, y= %i\n", cells[i].vertex[3].first, cells[i].vertex[3].second);
         for (int f = 0; f < 4; f++) {
             //controls index number
             int offset1 = (f % 2) ? 2 : 1;
             int offset2 = (f > 1) ? 3 : 0;
-
 
             SDL_SetRenderDrawColor(game::renderer, 0, 0, 0, 255);
             SDL_RenderDrawLine(game::renderer, cells[i].vertex[offset1].first + 100, cells[i].vertex[offset1].second + 100
@@ -65,6 +75,7 @@ void map::drawMap() {
 
         }
     }
+    */
 
     //Draw rooms
     for (int i = 0; i < (int)cells.size(); i++) {
@@ -97,5 +108,9 @@ void map::drawMap() {
     }
 
 
-
 }
+<<<<<<< Updated upstream
+=======
+
+
+>>>>>>> Stashed changes
