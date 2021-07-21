@@ -46,17 +46,11 @@ void map::drawMap() {
         };
     */
 
-<<<<<<< Updated upstream
-    BSPDungeon* city = new BSPDungeon(400, 400, 4);
-    city->buildDungeon(5);
-=======
 
     BSPDungeon* city = new BSPDungeon(400, 400, 5);
->>>>>>> Stashed changes
     std::vector<Cell> cells = city->getLeaves();
     std::vector<Room> corridors = city->getRooms();
 
-    /*
     //Draw Cell containers
     for (int i = 0 ; i < (int)cells.size(); i++) {
         printf("Cell %i\n", i+1);
@@ -75,8 +69,9 @@ void map::drawMap() {
 
         }
     }
-    */
 
+
+    printf("%i", cells.size());
     //Draw rooms
     for (int i = 0; i < (int)cells.size(); i++) {
         SDL_Rect roomRect;
@@ -109,8 +104,3 @@ void map::drawMap() {
 
 
 }
-<<<<<<< Updated upstream
-=======
-
-
->>>>>>> Stashed changes

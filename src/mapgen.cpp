@@ -92,26 +92,15 @@ double PerlinNoise::grad(int hash, double x, double y, double z) {
 BSPDungeon::BSPDungeon(int width, int height, int iterations) {
     dungeonHeight = height;
     dungeonWidth = width;
-<<<<<<< Updated upstream
+    dungeonIterations = iterations;
 
     int val[3]{0, dungeonWidth, dungeonHeight};
-=======
-    dungeonIterations = iterations;
-    int val[3]{0, width, height};
->>>>>>> Stashed changes
     for (int i = 0; i < 4; i++) {
         root.vertex[i] = std::make_pair(val[(i % 2) ? 1 : 0], val[(i > 1) ? 2 : 0]);
     }
     leaves.push_back(root);
-<<<<<<< Updated upstream
-}
 
-void BSPDungeon::buildDungeon(int iterations) {
-    /*
-     * For Reference:
-=======
-
-    for (int i = 0; i < iterations; i++) {
+    for (int i = 0; i < dungeonIterations; i++) {
         split();
     }
 
@@ -121,130 +110,12 @@ void BSPDungeon::buildDungeon(int iterations) {
 
 void BSPDungeon::split() {
     /** For Reference:
->>>>>>> Stashed changes
      *  A----------B
      *  |          |
      *  |          |
      *  C----------D
      *  Pair [X, Y]
      */
-
-<<<<<<< Updated upstream
-    //Initialize rand()
-    time_t t;
-    srand(time(&t));
-
-    /***********************************
-     * Creates cells based on iterations
-     */
-    std::vector<Cell> leafBuffer;
-    for (int a = 0; a < iterations; a++) {
-        for (int i = 0; i < (int)leaves.size(); i++) {
-            // Leaf1 will be the left most side during a Y-Split
-            // Leaf1 will be the top most side during a X-Split
-            Cell* leaf1 = new Cell();
-            Cell* leaf2 = new Cell();
-
-            //Hash Coordinates
-            std::pair<int, int> A = leaves[i].vertex[0];
-            std::pair<int, int> B = leaves[i].vertex[1];
-            std::pair<int, int> C = leaves[i].vertex[2];
-            std::pair<int, int> D = leaves[i].vertex[3];
-
-            /*
-             * Splits in random axis
-             * checks if the target Node is too long/wide and flips the "axis-split" accordingly
-             * capVal limits the split range by 30% (By default) of the maximum height/width of the Node
-             */
-
-            //Flips the axis of the split if the opposite dimension (length/width) is larger (side * splitMult).
-            int splitMult = 1.15;
-
-            //Makes sure that it does not split too near to the borders and making a really small Cell
-            //sizeVariance is the minimum of which a Node can be split. Cannot split a Node and have one
-            //side less than sizeVariance% of the whole Node size.
-            //int sizeVariance = 0.35;
-
-            //Split in Y-Axis
-            if(rand() % 2 ? ((C.second - A.second) > ((B.first - A.first) * splitMult) ? false : true) :
-                            ((B.first - A.first) > ((C.second - A.second) * splitMult) ? true  : false)) {
-
-
-                int capVal = (B.first - A.first) * 0.35;
-
-                //Random Y Split value (X value)
-                int randX = rand() % ((A.first + capVal) - (B.first - capVal)) + (A.first + capVal);
-
-                leaf1->vertex[0] = A;
-                leaf1->vertex[1] = std::make_pair(randX, A.second);
-                leaf1->vertex[2] = C;
-                leaf1->vertex[3] = std::make_pair(randX, C.second);
-                leaf1->parent = &leaves[i];
-                leaf1->split = false;
-
-                leaf2->vertex[0] = std::make_pair(randX, A.second);
-                leaf2->vertex[1] = B;
-                leaf2->vertex[2] = std::make_pair(randX, C.second);
-                leaf2->vertex[3] = D;
-                leaf2->parent = &leaves[i];
-                leaf2->split = false;
-
-            }
-            //Split in X-Axis
-            else {
-                int capVal = (C.second - A.second) * 0.35;
-
-                //Random X Split value (Y value)
-                int randY = rand() % ((A.second + capVal) - (C.second - capVal)) + (A.second + capVal);
-
-                leaf1->vertex[0] = A;
-                leaf1->vertex[1] = B;
-                leaf1->vertex[2] = std::make_pair(A.first, randY);
-                leaf1->vertex[3] = std::make_pair(B.first, randY);
-                leaf1->parent = &leaves[i];
-                leaf1->split = true;
-
-                leaf2->vertex[0] = std::make_pair(A.first, randY);
-                leaf2->vertex[1] = std::make_pair(B.first, randY);
-                leaf2->vertex[2] = C;
-                leaf2->vertex[3] = D;
-                leaf2->parent = &leaves[i];
-                leaf2->split = true;
-
-
-
-            }
-            //Assigns newly created leaves as children of the derived Node
-            leaves[i].children[0] = leaf1;
-            leaves[i].children[1] = leaf2;
-
-            //Assigns newly created leaves as sisters to each other
-            leaf1->sister = leaf2;
-            leaf2->sister = leaf1;
-
-            leafBuffer.push_back(*leaf1);
-            leafBuffer.push_back(*leaf2);
-        }
-    leaves.clear();
-    leaves = leafBuffer;
-    leafBuffer.clear();
-    }
-
-    /***********************************
-     * Creates Rooms
-     */
-    buildRooms();
-
-    /***********************************
-     * Creates Corridors
-     */
-    buildCorridors();
-
-    //Print out all information about rooms with one iteration to test wtf is going on with pointers
-    Room test1 = leaves[0].room;
-    Room test2 = leaves[0].sister->room;
-    Room test3 = leaves[1].room;
-=======
     //Initializes rand with local time
     time_t t;
     srand(time(&t));
@@ -263,7 +134,6 @@ void BSPDungeon::split() {
         std::pair<int, int> C = leaves[i].vertex[2];
         std::pair<int, int> D = leaves[i].vertex[3];
 
-
         //Flips the axis of the split if the opposite dimension (length or width) is larger (side * splitMult).
         //Lower number for more square shaped rooms vice versa.
         int splitMult = 1.15;
@@ -278,6 +148,7 @@ void BSPDungeon::split() {
         //Split in Y-Axis
         if(rand() % 2 ? ((C.second - A.second) > ((B.first - A.first) * splitMult) ? false : true) :
                         ((B.first - A.first) > ((C.second - A.second) * splitMult) ? true  : false)) {
+
             int capVal = (B.first - A.first) * sizeVariance;
 
             //Random Y Split value (X value)
@@ -310,11 +181,12 @@ void BSPDungeon::split() {
             leaf2->vertex[2] = C;
             leaf2->vertex[3] = D;
         }
->>>>>>> Stashed changes
 
-    printf("Room %i: X: %i Y: %i H: %i W: %i \n", 1, test1.origin.first, test1.origin.second, test1.height, test1.width );
-    printf("Room %i: X: %i Y: %i H: %i W: %i (SISTER)\n", 2, test2.origin.first, test2.origin.second, test2.height, test2.width);
-    printf("Room %i: X: %i Y: %i H: %i W: %i (no pointer)\n", 2, test3.origin.first, test3.origin.second, test3.height, test3.width);
+        leafBuffer.push_back(*leaf1);
+        leafBuffer.push_back(*leaf2);
+    }
+    leaves.clear();
+    leaves = leafBuffer;
 }
 
 void BSPDungeon::buildRooms(){
@@ -438,12 +310,8 @@ int BSPDungeon::findSmallestRoomDimension() {
     //Default size
     //Note: Setting making this empty/NULL or even 0 will make only return 0
     //Check printf() bug
-<<<<<<< Updated upstream
-    int side = 52;
-=======
     int side = 25;
 
->>>>>>> Stashed changes
     for(int i = 0; i < (int)leaves.size(); i++) {
         if (leaves[i].room.height > leaves[i].room.width) {
             side = (leaves[i].room.width < side) ? leaves[i].room.width : side;

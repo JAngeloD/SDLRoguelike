@@ -8,18 +8,33 @@
 1626646147 source:c:\sdlroguelike\sdlroguelike\src\main.cpp
 	"game.h"
 
-<<<<<<< Updated upstream
-1626656857 source:c:\sdlroguelike\sdlroguelike\src\map.cpp
+1625952633 ated upstream
+
+1626893595 source:c:\sdlroguelike\sdlroguelike\src\map.cpp
 	"map.h"
 
-1626656474 source:c:\sdlroguelike\sdlroguelike\src\mapgen.cpp
-=======
-1626890318 source:c:\sdlroguelike\sdlroguelike\src\map.cpp
-	"map.h"
-
-1626839519 source:c:\sdlroguelike\sdlroguelike\src\mapgen.cpp
->>>>>>> Stashed changes
+1626893289 source:c:\sdlroguelike\sdlroguelike\src\mapgen.cpp
 	"mapgen.h"
+
+1626892388 shed changes
+	"mapgen.h"
+	<SDL.h>
+	<SDL_image.h>
+	<stdio.h>
+	<fstream>
+	<string>
+	<cmath>
+	"game.h"
+	"mapgen.h"
+	<vector>
+	<array>
+	<cmath>
+	<random>
+	<algorithm>
+	<numeric>
+	<utility>
+	<SDL.h>
+	<time.h>
 
 1626641990 source:c:\sdlroguelike\sdlroguelike\src\perlinnoise.cpp
 	"PerlinNoise.h"
@@ -432,11 +447,7 @@
 	<vector>
 	"game.h"
 
-<<<<<<< Updated upstream
-1626656807 c:\sdlroguelike\sdlroguelike\include\map.h
-=======
-1626722804 c:\sdlroguelike\sdlroguelike\include\map.h
->>>>>>> Stashed changes
+1626893047 c:\sdlroguelike\sdlroguelike\include\map.h
 	<SDL.h>
 	<SDL_image.h>
 	<stdio.h>
@@ -462,11 +473,7 @@
 	"texture.h"
 	"game.h"
 
-<<<<<<< Updated upstream
-1626656611 c:\sdlroguelike\sdlroguelike\include\mapgen.h
-=======
-1626892388 c:\sdlroguelike\sdlroguelike\include\mapgen.h
->>>>>>> Stashed changes
+1626893146 c:\sdlroguelike\sdlroguelike\include\mapgen.h
 	<vector>
 	<array>
 	<cmath>

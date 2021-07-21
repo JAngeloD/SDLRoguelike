@@ -38,6 +38,7 @@ class BSPDungeon {
 
     private:
     void buildRooms();
+    void split();
     void connectRoom(Room room1ID, Room room2ID, bool splitAxis);
     void buildCorridors();
     int findSmallestRoomDimension(); //Finds the smallest width/height of a room to be used to make corridor size scale when increasing iteration #
@@ -66,9 +67,4 @@ private:
 	double lerp(double t, double a, double b);
 	double grad(int hash, double x, double y, double z);
 };
-
-<<<<<<< Updated upstream
-
-=======
->>>>>>> Stashed changes
 #endif // MAPGEN_H

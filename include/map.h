@@ -21,14 +21,8 @@ class map
         void drawMap();
 
     private:
-<<<<<<< Updated upstream
         std::vector<std::vector<int>> terrain;
         PerlinNoise noiseMap;
-
-        //SDL_Rect tileArea;
-
-=======
->>>>>>> Stashed changes
 
 };
 
