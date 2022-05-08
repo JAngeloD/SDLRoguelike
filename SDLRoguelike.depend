@@ -1,19 +1,19 @@
 # depslib dependency file v1.0
-1626645964 source:c:\sdlroguelike\sdlroguelike\src\game.cpp
+1640478190 source:c:\sdlroguelike\sdlroguelike\src\game.cpp
 	"game.h"
 
 1626644889 source:c:\sdlroguelike\sdlroguelike\src\game_entity.cpp
 	"game_entity.h"
 
-1626646147 source:c:\sdlroguelike\sdlroguelike\src\main.cpp
+1631124846 source:c:\sdlroguelike\sdlroguelike\src\main.cpp
 	"game.h"
 
 1625952633 ated upstream
 
-1626893595 source:c:\sdlroguelike\sdlroguelike\src\map.cpp
+1640823856 source:c:\sdlroguelike\sdlroguelike\src\map.cpp
 	"map.h"
 
-1626893289 source:c:\sdlroguelike\sdlroguelike\src\mapgen.cpp
+1640921137 source:c:\sdlroguelike\sdlroguelike\src\mapgen.cpp
 	"mapgen.h"
 
 1626892388 shed changes
@@ -39,22 +39,25 @@
 1626641990 source:c:\sdlroguelike\sdlroguelike\src\perlinnoise.cpp
 	"PerlinNoise.h"
 
-1625952741 source:c:\sdlroguelike\sdlroguelike\src\player.cpp
+1640923351 source:c:\sdlroguelike\sdlroguelike\src\player.cpp
 	"player.h"
 
-1625883749 source:c:\sdlroguelike\sdlroguelike\src\texture.cpp
+1628209547 source:c:\sdlroguelike\sdlroguelike\src\texture.cpp
 	"texture.h"
 
-1626645947 c:\sdlroguelike\sdlroguelike\include\game.h
+1630217727 c:\sdlroguelike\sdlroguelike\include\game.h
 	<SDL.h>
 	<SDL_image.h>
+	<SDL_ttf.h>
 	<stdio.h>
 	<iostream>
 	<string>
-	"game_entity.h"
+	"windowmanager.h"
+	"messagelog.h"
+	"playerlog.h"
 	"texture.h"
 	"map.h"
-	"player.h"
+	"mapgen.h"
 
 1608576488 c:\sdl2-2.0.14\x86_64-w64-mingw32\include\sdl2\sdl.h
 	"SDL_main.h"
@@ -431,7 +434,7 @@
 	"begin_code.h"
 	"close_code.h"
 
-1625807274 c:\sdlroguelike\sdlroguelike\include\game_entity.h
+1640316646 c:\sdlroguelike\sdlroguelike\include\game_entity.h
 	<SDL.h>
 	<SDL_image.h>
 	<stdio.h>
@@ -439,7 +442,7 @@
 	<string>
 	"game.h"
 
-1625883637 c:\sdlroguelike\sdlroguelike\include\texture.h
+1628209547 c:\sdlroguelike\sdlroguelike\include\texture.h
 	<SDL.h>
 	<SDL_image.h>
 	<stdio.h>
@@ -447,15 +450,23 @@
 	<vector>
 	"game.h"
 
-1626893047 c:\sdlroguelike\sdlroguelike\include\map.h
+1640823181 c:\sdlroguelike\sdlroguelike\include\map.h
 	<SDL.h>
-	<SDL_image.h>
 	<stdio.h>
 	<fstream>
 	<string>
 	<cmath>
+	<iostream>
+	"tgmath.h"
 	"game.h"
 	"mapgen.h"
+	"texture.h"
+	"tile.h"
+	"prop.h"
+	"player.h"
+	"monster.h"
+	"messagelog.h"
+	"item.h"
 
 1626642510 c:\sdlroguelike\sdlroguelike\include\perlinnoise.h
 	<vector>
@@ -468,13 +479,17 @@
 	<SDL.h>
 	<time.h>
 
-1625952633 c:\sdlroguelike\sdlroguelike\include\player.h
-	"tgmath.h"
-	"texture.h"
-	"game.h"
+1640558469 c:\sdlroguelike\sdlroguelike\include\player.h
+	"monster.h"
+	"map.h"
+	"entity.h"
+	"messagelog.h"
+	"playerlog.h"
 
-1626893146 c:\sdlroguelike\sdlroguelike\include\mapgen.h
+1631031208 c:\sdlroguelike\sdlroguelike\include\mapgen.h
 	<vector>
+	<iostream>
+	<fstream>
 	<array>
 	<cmath>
 	<random>
@@ -483,4 +498,133 @@
 	<utility>
 	<SDL.h>
 	<time.h>
+
+1627585786 c:\sdlroguelike\sdlroguelike\include\prop.h
+
+1627585546 source:c:\sdlroguelike\sdlroguelike\src\prop.cpp
+	"prop.h"
+
+1630016975 source:c:\sdlroguelike\sdlroguelike\src\entity.cpp
+	"entity.h"
+
+1640558061 c:\sdlroguelike\sdlroguelike\include\entity.h
+	<string>
+	<vector>
+	"item.h"
+	"inventory.h"
+
+1640558573 c:\sdlroguelike\sdlroguelike\include\item.h
+	<SDL.h>
+	<SDL_image.h>
+	<string>
+
+1640558700 source:c:\sdlroguelike\sdlroguelike\src\item.cpp
+	"item.h"
+
+1640815117 c:\sdlroguelike\sdlroguelike\include\tile.h
+	<stdio.h>
+	<iostream>
+	"map.h"
+	"texture.h"
+	"prop.h"
+	"item.h"
+	"entity.h"
+
+1640821618 source:c:\sdlroguelike\sdlroguelike\src\tile.cpp
+	"tile.h"
+
+1629492295 source:c:\sdlroguelike\sdlroguelike\src\mapmaster.cpp
+	"mapmaster.h"
+
+1629492524 c:\sdlroguelike\sdlroguelike\include\mapmaster.h
+	"map.h"
+	"entity.h"
+
+1640501497 source:c:\sdlroguelike\sdlroguelike\src\windowmanager.cpp
+	"windowmanager.h"
+
+1640480174 c:\sdlroguelike\sdlroguelike\include\windowmanager.h
+	"map.h"
+	"game.h"
+
+1628196284 source:c:\sdlroguelike\sdlroguelike\src\texturefont.cpp
+	"texturefont.h"
+
+1628210526 c:\sdlroguelike\sdlroguelike\include\texturefont.h
+
+1547325890 c:\sdl2_ttf-2.0.15\x86_64-w64-mingw32\include\sdl2\sdl_ttf.h
+	"SDL.h"
+	"begin_code.h"
+	"close_code.h"
+
+1629753140 source:c:\sdlroguelike\sdlroguelike\src\interface.cpp
+	"interface.h"
+
+1629753107 c:\sdlroguelike\sdlroguelike\include\interface.h
+	<string>
+	"game.h"
+
+1628225116 source:c:\sdlroguelike\sdlroguelike\src\actionlog.cpp
+	"actionlog.h"
+
+1628225226 c:\sdlroguelike\sdlroguelike\include\actionlog.h
+
+1640823780 source:c:\sdlroguelike\sdlroguelike\src\monster.cpp
+	"monster.h"
+
+1640823616 c:\sdlroguelike\sdlroguelike\include\monster.h
+	<math.h>
+	"map.h"
+	"entity.h"
+	"item.h"
+
+1630217843 c:\sdlroguelike\sdlroguelike\include\messagelog.h
+	<string>
+	"game.h"
+	"message.h"
+
+1630122604 source:c:\sdlroguelike\sdlroguelike\src\messagelog.cpp
+	"messagelog.h"
+
+1640559280 source:c:\sdlroguelike\sdlroguelike\src\playerlog.cpp
+	"playerlog.h"
+
+1640559251 c:\sdlroguelike\sdlroguelike\include\playerlog.h
+	<vector>
+	<string>
+	"player.h"
+	"message.h"
+
+1629843093 c:\sdlroguelike\sdlroguelike\include\message.h
+	<string>
+	"game.h"
+
+1629843033 source:c:\sdlroguelike\sdlroguelike\src\message.cpp
+	"message.h"
+
+1640316701 c:\sdlroguelike\sdlroguelike\include\inventory.h
+	<SDL.h>
+	<SDL_image.h>
+
+1640314711 source:c:\sdlroguelike\sdlroguelike\src\inventory.cpp
+	"inventory.h"
+
+1640312806 source:c:\sdlroguelike\sdlroguelike\src\equipment.cpp
+	"equipment.h"
+
+1640312958 c:\sdlroguelike\sdlroguelike\include\equipment.h
+	"item.h"
+
+1640312867 source:c:\sdlroguelike\sdlroguelike\src\consumables.cpp
+	"consumables.h"
+
+1640312950 c:\sdlroguelike\sdlroguelike\include\consumables.h
+	"item.h"
+
+1640480113 source:c:\sdlroguelike\sdlroguelike\src\consumablescreen.cpp
+	"consumableScreen.h"
+
+1640478008 c:\sdlroguelike\sdlroguelike\include\consumablescreen.h
+	"consumables.h"
+	"player.h"
 

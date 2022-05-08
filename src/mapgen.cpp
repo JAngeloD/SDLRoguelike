@@ -1,94 +1,5 @@
 #include "mapgen.h"
 
-// THIS IS A DIRECT TRANSLATION TO C++11 FROM THE REFERENCE
-// JAVA IMPLEMENTATION OF THE IMPROVED PERLIN FUNCTION (see http://mrl.nyu.edu/~perlin/noise/)
-// THE ORIGINAL JAVA IMPLEMENTATION IS COPYRIGHT 2002 KEN PERLIN
-
-// I ADDED AN EXTRA METHOD THAT GENERATES A NEW PERMUTATION VECTOR (THIS IS NOT PRESENT IN THE ORIGINAL IMPLEMENTATION)
-
-// Initialize with the reference values for the permutation vector
-PerlinNoise::PerlinNoise() {
-
-	// Initialize the permutation vector with the reference values
-	p = {
-		151,160,137,91,90,15,131,13,201,95,96,53,194,233,7,225,140,36,103,30,69,142,
-		8,99,37,240,21,10,23,190, 6,148,247,120,234,75,0,26,197,62,94,252,219,203,117,
-		35,11,32,57,177,33,88,237,149,56,87,174,20,125,136,171,168, 68,175,74,165,71,
-		134,139,48,27,166,77,146,158,231,83,111,229,122,60,211,133,230,220,105,92,41,
-		55,46,245,40,244,102,143,54, 65,25,63,161,1,216,80,73,209,76,132,187,208, 89,
-		18,169,200,196,135,130,116,188,159,86,164,100,109,198,173,186, 3,64,52,217,226,
-		250,124,123,5,202,38,147,118,126,255,82,85,212,207,206,59,227,47,16,58,17,182,
-		189,28,42,223,183,170,213,119,248,152, 2,44,154,163, 70,221,153,101,155,167,
-		43,172,9,129,22,39,253, 19,98,108,110,79,113,224,232,178,185, 112,104,218,246,
-		97,228,251,34,242,193,238,210,144,12,191,179,162,241, 81,51,145,235,249,14,239,
-		107,49,192,214, 31,181,199,106,157,184, 84,204,176,115,121,50,45,127, 4,150,254,
-		138,236,205,93,222,114,67,29,24,72,243,141,128,195,78,66,215,61,156,180 };
-	// Duplicate the permutation vector
-	p.insert(p.end(), p.begin(), p.end());
-}
-
-// Generate a new permutation vector based on the value of seed
-PerlinNoise::PerlinNoise(unsigned int seed) {
-	p.resize(256);
-
-	// Fill p with values from 0 to 255
-	std::iota(p.begin(), p.end(), 0);
-
-	// Initialize a random engine with seed
-	std::default_random_engine engine(seed);
-
-	// Suffle  using the above random engine
-	std::shuffle(p.begin(), p.end(), engine);
-
-	// Duplicate the permutation vector
-	p.insert(p.end(), p.begin(), p.end());
-}
-
-double PerlinNoise::noise(double x, double y, double z) {
-	// Find the unit cube that contains the point
-	int X = (int) floor(x) & 255;
-	int Y = (int) floor(y) & 255;
-	int Z = (int) floor(z) & 255;
-
-	// Find relative x, y,z of point in cube
-	x -= floor(x);
-	y -= floor(y);
-	z -= floor(z);
-
-	// Compute fade curves for each of x, y, z
-	double u = fade(x);
-	double v = fade(y);
-	double w = fade(z);
-
-	// Hash coordinates of the 8 cube corners
-	int A = p[X] + Y;
-	int AA = p[A] + Z;
-	int AB = p[A + 1] + Z;
-	int B = p[X + 1] + Y;
-	int BA = p[B] + Z;
-	int BB = p[B + 1] + Z;
-
-	// Add blended results from 8 corners of cube
-	double res = lerp(w, lerp(v, lerp(u, grad(p[AA], x, y, z), grad(p[BA], x-1, y, z)), lerp(u, grad(p[AB], x, y-1, z), grad(p[BB], x-1, y-1, z))),	lerp(v, lerp(u, grad(p[AA+1], x, y, z-1), grad(p[BA+1], x-1, y, z-1)), lerp(u, grad(p[AB+1], x, y-1, z-1),	grad(p[BB+1], x-1, y-1, z-1))));
-	return (res + 1.0)/2.0;
-}
-
-double PerlinNoise::fade(double t) {
-	return t * t * t * (t * (t * 6 - 15) + 10);
-}
-
-double PerlinNoise::lerp(double t, double a, double b) {
-	return a + t * (b - a);
-}
-
-double PerlinNoise::grad(int hash, double x, double y, double z) {
-	int h = hash & 15;
-	// Convert lower 4 bits of hash into 12 gradient directions
-	double u = h < 8 ? x : y,
-		   v = h < 4 ? y : h == 12 || h == 14 ? x : z;
-	return ((h & 1) == 0 ? u : -u) + ((h & 2) == 0 ? v : -v);
-}
-
 BSPDungeon::BSPDungeon(int width, int height, int iterations) {
     dungeonHeight = height;
     dungeonWidth = width;
@@ -106,8 +17,163 @@ BSPDungeon::BSPDungeon(int width, int height, int iterations) {
 
     buildRooms();
     buildCorridors();
+    mergeRoomsAndCorridors();
 }
 
+//NOTE "path" parameter not in use. Will change later
+//path hardcoded to "saves/mapgen.txt"
+void BSPDungeon::writeDungeonToFile(std::string path) {
+
+    //Default ground texture
+    int defaultTexture = 15;
+
+    //Tile texture vector
+    //Not not a 2D vector
+    std::vector<int> dungeon((dungeonHeight * dungeonWidth), defaultTexture); //Used as a final vector to be written in the path parameter
+
+    bool playerSpawned = false;
+    int playerRoom = rand() % ((int)roomList.size() - 26)  + 26;
+    for(int i = 0; i < (int)roomList.size(); i++) {
+        std::vector<std::pair<int, int>> corners;
+
+        ///IMPORTANT ORDER IS : A - B - D - C in corners vector
+        //Reference to the other 4
+        std::pair<int, int> A = roomList[i].origin; //Hash Coordinates
+        dungeon[(A.second * dungeonWidth) + A.first] = 0; //Assigns tile texture.
+        corners.push_back(A); //Pushes back into corners vector
+
+        std::pair<int, int> B = std::make_pair(roomList[i].origin.first + roomList[i].width, roomList[i].origin.second);
+        dungeon[(B.second * dungeonWidth) + B.first] = 3;
+        corners.push_back(B);
+
+        std::pair<int, int> D = std::make_pair(roomList[i].origin.first + roomList[i].width, roomList[i].origin.second + roomList[i].height);
+        dungeon[(D.second * dungeonWidth) + D.first] = 31;
+        corners.push_back(D);
+
+        std::pair<int, int> C = std::make_pair(roomList[i].origin.first, roomList[i].origin.second + roomList[i].height);
+        dungeon[(C.second * dungeonWidth) + C.first] = 28;
+        corners.push_back(C);
+
+        ///Flags spots where monsters will spawn
+        ///Will also flag a room where the player will spawn where there will be no monsters
+        ///Uses corners vector to decide, thus will not spawn on corridors
+        //Determines if the room is a corridor
+        //Exits the loop if it is
+        int lengthDiff = corners[1].first - corners[0].first;
+        int heightDiff = corners[3].second - corners[0].second;
+        if(lengthDiff > 5 && heightDiff > 5) {
+
+            //Makes a range for possible locations to spawn monsters (x and y)
+            std::pair<int, int> xRange = std::make_pair(corners[0].first + 1, corners[1].first - 1);
+            std::pair<int, int> yRange = std::make_pair(corners[1].second + 1, corners[3].second - 1);
+
+            //Amount of monsters to be spawned
+            int numOfMonsters = rand() % 3 + 1;
+
+            //Assigns the monsters to a tile
+            for (int k = 0; k < numOfMonsters; k++) {
+                if(i == playerRoom) {
+                    dungeon[((rand() % (yRange.second - yRange.first + 1) + yRange.first) * dungeonWidth) +
+                            (rand() % (xRange.second - xRange.first + 1) + xRange.first)] = 5;
+                    break;
+                }
+                dungeon[((rand() % (yRange.second - yRange.first + 1) + yRange.first) * dungeonWidth) +
+                         (rand() % (xRange.second - xRange.first + 1) + xRange.first)] = 11;
+            }
+
+        }
+
+        //Draws the whole room using the corners
+        int textureID = defaultTexture; //Note this is a blank texture
+        bool isHorizontal = true;
+        for (int k = 0; k < (int)corners.size(); k++) {
+            int nextCorner = (k + 1) == (int)corners.size() ? 0 : k + 1;
+
+            //wall textures
+            if(corners[nextCorner].first > corners[k].first || corners[nextCorner].first < corners[k].first) {
+                textureID = 1;
+                isHorizontal = true;
+            }
+            else if (corners[nextCorner].second > corners[k].second) {
+                textureID = 17;
+                isHorizontal = false;
+            }
+            else if (corners[nextCorner].second < corners[k].second) {
+                textureID = 14;
+                isHorizontal = false;
+            }
+
+            int previousIndex = 0;
+            bool closeCorrdior = false;
+            int targetIndex = 0;
+            int sideSize = (isHorizontal) ? corners[nextCorner].first - corners[k].first : corners[nextCorner].second - corners[k].second;
+            for (int j = 0, dynamicIterator = 0; j < std::abs(sideSize); j++, (sideSize > 0) ? dynamicIterator++ : dynamicIterator--) {
+                if (j % std::abs(sideSize) != 0) {
+                    //Horizontal walls
+                    if (isHorizontal) {
+                        targetIndex = (corners[k].second * dungeonWidth) + (corners[k].first + dynamicIterator);
+
+                        if (dungeon[targetIndex] == defaultTexture) {
+                            if (closeCorrdior) {
+                                dungeon[previousIndex] = (k == 0) ? 42 : 45;
+                                previousIndex = 0;
+                                closeCorrdior = false;
+                            }
+                            dungeon[targetIndex] = textureID;
+
+                        }
+                        else {
+                            if(previousIndex == 0) {
+                                dungeon[targetIndex] = (k == 0) ? 43 : 44;
+                            }
+                            //Replace conflicts with the default texture
+                            else {
+                                dungeon[targetIndex] = defaultTexture;
+                            }
+                            previousIndex = targetIndex;
+                            closeCorrdior = true;
+                        }
+                    }
+                    //Vertical walls
+                    else {
+                        targetIndex = ((corners[k].second + dynamicIterator) * dungeonWidth) + corners[k].first;
+                        if (dungeon[targetIndex] == defaultTexture) {
+                            if (closeCorrdior) {
+                                dungeon[previousIndex] = (k == 3) ? 43 : 44;
+                                previousIndex = 0;
+                                closeCorrdior = false;
+                            }
+                            dungeon[targetIndex] = textureID;
+                        }
+                        //Replace conflicts with the default texture
+                        else {
+                            if(previousIndex == 0) {
+                                dungeon[targetIndex] = (k == 3) ? 45 : 42;
+                            }
+                            //Replace conflicts with the default texture
+                            else {
+                                dungeon[targetIndex] = defaultTexture;
+                            }
+                            previousIndex = targetIndex;
+                            closeCorrdior = true;
+                        }
+                    }
+                }
+
+            }
+        }
+    }
+
+    std::ofstream myfile;
+    myfile.open ("saves/mapgen.txt", std::ofstream::out | std::ofstream::trunc);
+    for(int i = 0; i < (int)dungeon.size(); i++) {
+        std::string delimit = (i + 1) % dungeonWidth == 0 ? "\n" : ",";
+        myfile << std::to_string(dungeon[i]) + delimit;
+    }
+    myfile.close();
+}
+
+//NOTE: Makes nodes in the dungeon NOT the actual rooms, see buildRooms
 void BSPDungeon::split() {
     /** For Reference:
      *  A----------B
@@ -142,7 +208,7 @@ void BSPDungeon::split() {
         //sizeVariance is the minimum of which a Node can be split. Cannot split a Node and have one
         //side less than sizeVariance% of the whole Node size.
         //Lower number for larger range of size variance vice versa. Has to be between 0.16 - 0.5
-        float sizeVariance = 0.35;
+        float sizeVariance = 0.45;
 
         //Note: Name of the split is parallel to the axis it's splitting to. Ex: Y-Split is horizontal
         //Split in Y-Axis
@@ -219,6 +285,7 @@ void BSPDungeon::buildRooms(){
     }
 }
 
+//See connectRoom() for usage
 void BSPDungeon::connectRoom(Room room1ID, Room room2ID, bool splitAxis) {
 
     Room room1 = room1ID;
@@ -297,19 +364,26 @@ void BSPDungeon::buildCorridors() {
             }
 
             for (int m = 0; m < (int)potentialRoom1.size(); m++)
-            for (int n = 0; n < (int)potentialRoom2.size(); n++) {
-                connectRoom(potentialRoom1[m].room, potentialRoom2[n].room, splitAxis);
-                //Add a break here if you only one corridor attached to each room
-            }
+                for (int n = 0; n < (int)potentialRoom2.size(); n++) {
+                    connectRoom(potentialRoom1[m].room, potentialRoom2[n].room, splitAxis);
+                    //Add a break here if you only one corridor attached to each room
+                    break;
+                }
 
         }
     }
 }
 
+//Merges corridors from roomList and rooms from leaves into roomList
+void BSPDungeon::mergeRoomsAndCorridors() {
+    for(int i = 0; i < (int)leaves.size(); i++) {
+        roomList.push_back(leaves[i].room);
+    }
+}
+
 int BSPDungeon::findSmallestRoomDimension() {
     //Default size
-    //Note: Setting making this empty/NULL or even 0 will make only return 0
-    //Check printf() bug
+    //FIXME: Setting making this empty/NULL or even 0 will make only return 0
     int side = 25;
 
     for(int i = 0; i < (int)leaves.size(); i++) {

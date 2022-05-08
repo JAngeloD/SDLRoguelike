@@ -1,46 +1,114 @@
 #include "player.h"
 
-int player::playerXPos = 0;
-int player::playerYPos = 0;
-
-player::player()
-{
-    velX = 0;
-    velY = 0;
-    diag = sqrt(pow(maxVelX, 2) /2);
-}
-
-player::~player()
+player::player(messagelog& messageLog, playerlog& playerLog, int texture, int maxHP, int maxMP)
 {
 
+    this->owner = nullptr;
+    this->messageLog = &messageLog;
+    this->playerLog = &playerLog;
+
+    //Sets players texture using texture id
+    this->setTexture(texture);
+
+    //Sets players HP
+    this->setMaxHP(maxHP);
+    this->setCurrentHP(maxHP);
+
+    //Sets players MP
+    this->setMaxMP(maxMP);
+    this->setCurrentMP(maxMP);
+
+    //Sets players attack
+    this->setAttack(3);
+
+    //Sets players defense
+    this->setDefense(0);
+
+    //Sets players username shown on the top of the player log
+    this->playerLog->loadStaticStat("Player");
+
+    this->playerLog->loadDynamicStat("HP",255, 0, 0, this->getCurrentHP(), this->getMaxHP());
+    this->playerLog->loadDynamicStat("MP",0, 0, 255, this->getCurrentMP(), this->getMaxMP());
+    this->playerLog->loadDynamicStat("ATK", 255, 255, 255, this->getAttack());
+    this->playerLog->loadDynamicStat("DEF", 255, 255, 255, this->getDefense());
+
+    turns = 0;
 }
 
-void player::handleEvent(SDL_Event& event){
-    if( event.type == SDL_KEYDOWN && event.key.repeat == 0) {
+player::~player() {}
+
+bool player::handleEvent(SDL_Event& event) {
+    bool useTurn = false;
+    if(event.type == SDL_KEYDOWN && event.key.repeat == 0) {
         switch (event.key.keysym.sym) {
-            case SDLK_UP: velY -= maxVelY; break;
-            case SDLK_DOWN: velY += maxVelY; break;
-            case SDLK_LEFT: velX -= maxVelX; break;
-            case SDLK_RIGHT: velX += maxVelX; break;
+            case SDLK_UP:
+                pollAction(this->owner->xpos, this->owner->ypos - 1);
+                useTurn = true;
+                break;
+            case SDLK_DOWN:
+                pollAction(this->owner->xpos, this->owner->ypos + 1);
+                useTurn = true;
+                break;
+            case SDLK_LEFT:
+                pollAction(this->owner->xpos - 1, this->owner->ypos);
+                useTurn = true;
+                break;
+            case SDLK_RIGHT:
+                pollAction(this->owner->xpos + 1, this->owner->ypos);
+                useTurn = true;
+                break;
         }
     }
-    else if ( event.type == SDL_KEYUP && event.key.repeat == 0) {
-        switch (event.key.keysym.sym) {
-            case SDLK_UP: velY = 0; break;
-            case SDLK_DOWN: velY = 0; break;
-            case SDLK_LEFT: velX = 0; break;
-            case SDLK_RIGHT: velX = 0; break;
-        }
-    }
+
+    return useTurn;
 }
 
-void player::move() {
-    if (velX != 0 && velY != 0) {
-        velX = (velX / abs(velX)) * diag;
-        velY = (velY / abs(velY)) * diag;
-    }
+void player::interact(int x, int y) {
 
-    playerXPos += velX;
-    playerYPos += velY;
 }
 
+void player::pickUp() {
+
+    this->setCurrentHP(this->getCurrentHP() + this->owner->titem->getHealth());
+    playerLog->updateDynamicValues("HP");
+
+//    this->setMana(this->owner->titem->getMana());
+
+    this->setAttack(this->getAttack() + this->owner->titem->getAttack());
+    playerLog->updateDynamicValuesNoDeplete("ATK");
+
+    this->setDefense(this->getDefense() + this->owner->titem->getDefense());
+    playerLog->updateDynamicValuesNoDeplete("DEF");
+
+    messageLog->addMessage("Picked up " + this->owner->titem->getItemName() + "!", 255,255,255);
+
+    this->owner->removeItem();
+}
+
+void player::move(int x, int y) {
+    this->owner->gameMap->world[y][x].assignEntity(this);
+}
+
+void player::attack(int x, int y) {
+    entity* targetEntity = this->owner->gameMap->world[y][x].tentity;
+    targetEntity->beDamaged(3);
+    messageLog->addMessage("Hit " + targetEntity->getEntityName() + " for " + std::to_string(3) + " damage", 255, 255, 255);
+    playerLog->updateDynamicValues("HP");
+    playerLog->updateDynamicValues("MP");
+}
+
+void player::pollAction(int x, int y) {
+    if (this->owner->gameMap->world[y][x].tentity != nullptr) {
+        attack(x, y);
+    }
+    else if (this->owner->gameMap->world[y][x].tprop != nullptr) {
+        interact(x, y);
+    }
+    else if (this->owner->gameMap->world[y][x].titem != nullptr) {
+        move(x, y);
+        pickUp();
+    }
+    else {
+        move(x, y);
+    }
+}

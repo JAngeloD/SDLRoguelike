@@ -1,14 +1,9 @@
 #include "texture.h"
+int texture::tileArea = 24;
 
-texture::texture()
-{
+texture::texture() {}
 
-}
-
-texture::~texture()
-{
-    //dtor
-}
+texture::~texture() {}
 
 void texture::load_spritesheet(std::string sheetPath, int row, int column, int width, int height, int area, int gap) {
 
@@ -24,7 +19,7 @@ void texture::load_spritesheet(std::string sheetPath, int row, int column, int w
     else {
 
         //Color key image
-        SDL_SetColorKey( loadedSurface, SDL_TRUE, SDL_MapRGB( loadedSurface->format, 34, 35, 35));
+        //SDL_SetColorKey( loadedSurface, SDL_TRUE, SDL_MapRGB( loadedSurface->format, 34, 35, 35));
         SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "0");
         sheet = SDL_CreateTextureFromSurface(game::renderer, loadedSurface);
 
@@ -62,14 +57,16 @@ void texture::load_spritesheet(std::string sheetPath, int row, int column, int w
     //for(int i=0; i<clip.size(); i++)
     //  printf("Texture %i = Xpos:%i, Ypos:%i \n", i, clip[i].x, clip[i].y);
 }
-
-SDL_Texture* texture::getSpriteSheet() {return sheet;}
-
 void texture::render(int xpos, int ypos, int sprR, int sprC) {
     SDL_Rect clipRect = {clip[(sprR*14) - (14- sprC)-1].x, clip[(sprR*14) - (14- sprC)-1].y, clip[sprR* sprC].w, clip[sprR* sprC].h};
-    SDL_Rect destRect = {xpos, ypos, 32, 32};
+    SDL_Rect destRect = {xpos, ypos, tileArea, tileArea};
     SDL_RenderCopy(game::renderer, sheet, &clipRect, &destRect);
+}
 
+void texture::render(int xpos, int ypos, int id) {
+    SDL_Rect clipRect = {clip[id].x, clip[id].y, clip[id].w, clip[id].h}; //Gets single sprite from spritesheet
+    SDL_Rect destRect = {xpos, ypos, tileArea, tileArea};
+    SDL_RenderCopy(game::renderer, sheet, &clipRect, &destRect);
 }
 
 void texture::free() {
