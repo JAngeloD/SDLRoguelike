@@ -5,14 +5,17 @@
 
 #include <SDL.h>
 #include <SDL_image.h>
+#include <SDL_ttf.h>
 #include <stdio.h>
 #include <iostream>
 #include <string>
 
-#include "game_entity.h"
+#include "windowmanager.h"
+#include "messagelog.h"
+#include "playerlog.h"
 #include "texture.h"
 #include "map.h"
-#include "player.h"
+#include "mapgen.h"
 
 class game
 {
@@ -41,19 +44,15 @@ class game
         void onOptionsChange();
 
         bool running() {return isRunning;}
+        SDL_Window& getWindow() {return *window;}
 
         static SDL_Renderer* renderer;
+        static SDL_Window* window;
 
     private:
-        //const Uint8* keyState = SDL_GetKeyboardState(NULL);
-        SDL_Event* event;
-
         bool isRunning;
-        SDL_Window* window;
-        int c = 0;
 
-        int* plyrXPos = nullptr;
-        int* plyrYPos = nullptr;
+
 };
 
 #endif // GAME_H

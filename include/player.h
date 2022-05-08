@@ -1,37 +1,38 @@
 #ifndef PLAYER_H
 #define PLAYER_H
 
-#include "tgmath.h"
-#include "texture.h"
-#include "game.h"
+#include "monster.h"
+#include "map.h"
+#include "entity.h"
+#include "messagelog.h"
+#include "playerlog.h"
 
-class player
+
+class messagelog;
+class playerlog;
+
+class player : public entity
 {
     public:
-        player();
+        player(messagelog& messageLog, playerlog& playerLog, int texture, int maxHP, int maxMP);
         ~player();
 
-        void handleEvent(SDL_Event& event);
-        void move();
-
-        int* getPlayerXPos() {return &playerXPos;}
-        int* getPlayerYPos() {return &playerYPos;}
+        bool handleEvent(SDL_Event& event);
 
     private:
-        const int maxVelX = 5;
-        const int maxVelY = 5;
+        void pollAction(int x, int y);
 
-        int velX;
-        int velY;
-        int diag;
+        void interact(int x, int y);
+        void attack(int x, int y);
+        void pickUp();
+        void move(int x, int y);
 
-        static int playerXPos;
-        static int playerYPos;
+    private:
+        messagelog* messageLog;
+        playerlog* playerLog;
+        playerlog* statLog;
 
-
-
-
-
+        Uint8 turns;
 };
 
 #endif // PLAYER_H

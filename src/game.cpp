@@ -1,21 +1,23 @@
 #include "game.h"
-
-
-map* gameMap;
-texture* spriteSheetA;
-player* mainPlayer;
-
 game::game() {}
-game::~game() {close();}
+game::~game() {}
 
 SDL_Renderer* game::renderer = nullptr;
+SDL_Window* game::window = nullptr;
+
+texture* sprite = nullptr;
+map* gameMap = nullptr;
+BSPDungeon* mapGenerator = nullptr;
+windowmanager* windowManager = nullptr;
+messagelog* messageLog = nullptr;
+playerlog* playerLog = nullptr;
+player* mainPlayer = nullptr;
 
 bool game::init(const char *title, int xpos, int ypos, int width, int height, Uint32 flags) {
 
     bool initSuccess = true;
 
     if (SDL_Init(SDL_INIT_EVERYTHING) < 0 ) {
-        //SDL has fucked up lmao
         printf("SDL Failed to load");
 
         initSuccess = false;
@@ -37,6 +39,7 @@ bool game::init(const char *title, int xpos, int ypos, int width, int height, Ui
         }
         else {
 
+            //Sets renderer
             renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
             if(renderer == NULL) {
                 printf("SDL_CreateRenderer didn't work nigga %s/n", SDL_GetError());
@@ -44,8 +47,8 @@ bool game::init(const char *title, int xpos, int ypos, int width, int height, Ui
             }
             else {
 
-                SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
-                printf("SDL fully functional and initialized\n ");
+                SDL_SetRenderDrawColor(renderer,34,35,35,255);
+                printf("SDL fully functional and initialized\n");
 
                 //Initialize PNG loading
 				int imgFlags = IMG_INIT_PNG;
@@ -54,19 +57,21 @@ bool game::init(const char *title, int xpos, int ypos, int width, int height, Ui
 					printf( "SDL_image could not initialize! SDL_image Error: %s\n", IMG_GetError() );
 				}
 
+				if((TTF_Init() == -1)) {
+                    printf( "SDL_ttf could not initialize! SDL_ttf Error: %s\n", TTF_GetError() );
+				}
+                SDL_SetWindowResizable(window, SDL_TRUE);
                 isRunning = true;
             }
         }
-
     }
 
     return initSuccess;
 }
 
 void game::handleEvents() {
-
     SDL_Event event;
-    SDL_PollEvent (&event);
+    SDL_PollEvent(&event);
     switch (event.type) {
         case SDL_QUIT:
             isRunning = false;
@@ -74,51 +79,72 @@ void game::handleEvents() {
         default:
             break;
     }
+    if (event.type == SDL_WINDOWEVENT) {
+        switch (event.window.event) {
+            case SDL_WINDOWEVENT_RESIZED:
+                windowManager->resizeArea();
+                break;
+            default:
+                break;
+        }
+    }
 
-    //mainPlayer->handleEvent(event);
+    if(mainPlayer->handleEvent(event)) {
+        gameMap->handleEvents(event);
+    }
 
 }
 
 void game::loadCoreData() {
+    windowManager = new windowmanager();
+    windowManager->load();
 
-    gameMap = new map();
+    sprite = new texture();
+    sprite->load_spritesheet("assets/tilemap/colored_tilemap.png", 10, 14, 125, 89, 8, 1);
 
-    spriteSheetA = new texture();
-    spriteSheetA->load_spritesheet("assets/tilemap/colored_tilemap.png", 10, 14, 125, 89, 8, 1);
+    messageLog = new messagelog();
+    messageLog->loadInterface("assets/Fonts/manaspc.ttf", windowManager->getMessageLogScreenSize());
 
-    //mainPlayer = new player();
+    playerLog = new playerlog();
+    playerLog->loadPlayerLog("assets/Fonts/manaspc.ttf");
+
+    mainPlayer = new player(*messageLog, *playerLog, 5, 32, 32);
+
+    mapGenerator = new BSPDungeon(100, 100, 4);
+    mapGenerator->writeDungeonToFile("TEST");
+
+    gameMap = new map("saves/mapgen.txt", *sprite, *mainPlayer);
 
 }
 
 void game::update() {
 
-    plyrXPos = mainPlayer->getPlayerXPos();
-    plyrYPos = mainPlayer->getPlayerYPos();
-    //mainPlayer->move();
-
 }
 
 void game::render() {
-
     SDL_RenderClear(renderer);
-    //spriteSheetA->render(*plyrXPos, *plyrYPos, 1, 7);
-    gameMap->drawMap();
+    gameMap->draw(windowManager->getMapScreenSize());
+    windowManager->drawWindow();
+    messageLog->draw(windowManager->getMessageLogScreenSize());
+    playerLog->draw(windowManager->getPlayerDataScreenSize());
+    SDL_SetRenderDrawColor(renderer,34,35,35,255); //Sets background color
     SDL_RenderPresent(renderer);
 }
 
 void game::close() {
+    std::cout << "Quitting program..." << std::endl;
 
-    printf("quitting...");
-    //Free loaded images
-    // *****************
+    //Destroy Interfaces
+    messageLog->destroyInterface();
 
-	//Destroy window
-	SDL_DestroyRenderer( renderer );
-	SDL_DestroyWindow( window );
+	//Destroy window and renderer
+	SDL_DestroyRenderer(renderer);
+	SDL_DestroyWindow(window);
 	window = NULL;
 	renderer = NULL;
 
 	//Quit SDL subsystems
+	TTF_Quit();
 	IMG_Quit();
 	SDL_Quit();
 
